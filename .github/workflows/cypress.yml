@@ -43,7 +43,7 @@ jobs:
         with:
           spec: '**/*.cy.js'  # Run all tests
           wait-on: 'http://localhost:3000,http://localhost:8080'
-          record: false  # Temporarily set to false to debug
+          record: true
           parallel: true
           group: 'Cypress Tests'
         env:
