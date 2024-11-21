@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - testes
-
+      
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
@@ -13,18 +13,17 @@ jobs:
         containers: [1, 2]
     steps:
       - name: Checkout
+        uses: actions/checkout@v4      
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Checkout server
-        uses: actions/checkout@v4
-        with:
+        with: 
           path: server
 
       - name: Start Server BackEnd
         run: |
           cd server
           npm install
-          npm start & 
+          npm start &
           until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)" == "200" ]; do
             echo "Waiting for server to start..."
             sleep 1
@@ -42,8 +41,9 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           spec: |
-            spec: '**/*.cy.js'  # Rodar todos os testes no diretório cypress/e2e/
-
+            cypress/e2e/cadastro-sucesso.cy.js
+            cypress/e2e/login-clinica.cy.js
+            cypress/e2e/dashboard.cy.js
           wait-on: 'http://localhost:3000,http://localhost:8080'
           record: true
           parallel: true
@@ -51,3 +51,4 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CHAVE_DE_REGISTRO_CYPRESS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#Sempre verifique a indentação do seu arquivo yaml
