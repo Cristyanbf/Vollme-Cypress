@@ -13,8 +13,9 @@ jobs:
         containers: [1, 2]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4      
-      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout server
         uses: actions/checkout@v4
         with: 
           path: server
@@ -41,9 +42,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           spec: |
-            cypress/e2e/cadastro-sucesso.cy.js
-            cypress/e2e/login-clinica.cy.js
-            cypress/e2e/dashboard.cy.js
+            spec: '**/*.cy.js'  # Rodar todos os testes no diretório cypress/e2e/
+
           wait-on: 'http://localhost:3000,http://localhost:8080'
           record: true
           parallel: true
