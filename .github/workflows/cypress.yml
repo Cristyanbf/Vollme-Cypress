@@ -31,12 +31,17 @@ jobs:
           echo "Servidor BackEnd está rodando com sucesso."
         working-directory: server
 
-      - name: Iniciar Web App FrontEnd
+      - name: Verificar e Iniciar Web App FrontEnd
         run: |
-          cd web
-          npm install
-          npm start &  # Inicia o Frontend em segundo plano
-        working-directory: web
+          if [ -d "web" ]; then
+            cd web
+            npm install
+            npm start &
+          else
+            echo "Diretório 'web' não encontrado. Verifique a estrutura do repositório."
+            exit 1
+          fi
+        working-directory: .
 
       - name: Rodar testes do Cypress
         uses: cypress-io/github-action@v6
