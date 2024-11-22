@@ -1,5 +1,7 @@
 name: Cypress Tests
-on: [push]
+
+on: 
+  push:
 
 jobs:
   cypress-run:
@@ -9,51 +11,44 @@ jobs:
       matrix:
         containers: [1, 2]
     steps:
-      - name: Checkout
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Checkout server
+      - name: Checkout do servidor
         uses: actions/checkout@v4
-        with: 
+        with:
           path: server
 
-      - name: Start Server BackEnd
+      - name: Iniciar Servidor BackEnd
         run: |
           cd server
           npm install
-          npm start &
-          until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)" == "200" ]; do
-            echo "Waiting for server to start..."
+          npm start &  # Inicia o servidor em segundo plano
+          until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 | grep -q "200"; do
+            echo "Esperando o servidor iniciar..."
             sleep 1
           done
-          echo "Server is running successfully."
+          echo "Servidor BackEnd está rodando com sucesso."
         working-directory: server
 
-      - name: Start Web App FrontEnd
+      - name: Iniciar Web App FrontEnd
         run: |
           cd web
           npm install
-          npm start &
+          npm start &  # Inicia o Frontend em segundo plano
+        working-directory: web
 
-      - name: Run Cypress Tests
+      - name: Rodar testes do Cypress
         uses: cypress-io/github-action@v6
         with:
-          start: npm start
+          wait-on: 'http://localhost:3000,http://localhost:8080'  # Aguarda o Frontend e o Backend estarem prontos
           spec: |
             cypress/e2e/cadastro-sucesso.cy.js
             cypress/e2e/login-clinica.cy.js
-            cypress/e2e/dashboard.cy.js 
-
-          wait-on: 'http://localhost:3000,http://localhost:8080'
+            cypress/e2e/dashboard.cy.js
           record: true
           parallel: true
           group: 'Cypress Tests'
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CHAVE_DE_REGISTRO_CYPRESS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#Sempre verifique a indentação do seu arquivo yaml
-
-
-
-    
-   
