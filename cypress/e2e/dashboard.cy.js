@@ -42,7 +42,10 @@ describe('Usuário logado na página de dashboard', () => {
             cy.get('[type="checkbox"]').check(['Sulamerica', 'Unimed', 'Bradesco'])
         })
         it('Seleciona o botão checkbox "Atende por plano?" após preenchimento do formulário para visualizar os planos de saúde', () => {
-            cy.get('../../cypress/fixtures/especialistas.json').then((dados) => {
+            beforeEach(() => {
+                cy.loginApi(Cypress.env('email'), Cypress.env('senha'))
+            })
+            cy.get('@especialistas').then((dados) => {
                 const especialista = dados.especialistas[0];
                 cy.criarEspecialista(
                     especialista.nome,
